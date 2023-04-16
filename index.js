@@ -1,5 +1,5 @@
-const express = require("express");this
-
+const express = require("express");
+var bodyParser = require("body-parser");
 // Database
 const database = require("./database");
 
@@ -7,6 +7,9 @@ const database = require("./database");
 // Initialise Express
 
 const booky = express();
+
+booky.use(bodyParser.urlencoded({extended: true}));
+booky.use(bodyParser.json());
 
 /*
 Route			/
@@ -168,6 +171,56 @@ booky.get("/publication/book/:isbn",(req,res) => {
 	}
 
 	return res.json({publications: getSpecificPublication});
+});
+
+// POST
+
+/*
+Route			/book/new
+Description		Add new book
+Access			PUBLIC
+Parameter 		NONE
+Methods 		POST
+*/
+
+booky.post("/book/new",(req,res) => {
+	const newBook = req.body;
+	if(newBook.length === 0){
+	database.books.push(newBook);
+	}
+	else{
+		return res.json({error: `The book is already present`});
+	}
+	return res.json({updateBooks: database.books});
+});
+
+
+/*
+Route			/publication/new
+Description		Add new publication
+Access			PUBLIC
+Parameter 		NONE
+Methods 		POST
+*/
+
+booky.post("/publication/new",(req,res) => {
+	const newPublication = req.body;
+	database.publication.push(newPublication);
+	return res.json({updatePublications: database.publication});
+});
+
+/*
+Route			/author/new
+Description		Add new author
+Access			PUBLIC
+Parameter 		NONE
+Methods 		POST
+*/
+
+booky.post("/author/new",(req,res) => {
+	const newAuthor = req.body;
+	database.author.push(newAuthor);
+	return res.json({updateAuthors: database.author});
 });
 
 booky.listen(3000,() => {
